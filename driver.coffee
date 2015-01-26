@@ -150,7 +150,7 @@ simulate = (->
 
         if @controllers.length == 0
           overlay = new OverlayMessage()
-          overlay.show "Please press <img src='#{chrome.extension.getURL "Xbox360_Button_A.png"}' /> to begin"
+          overlay.show "Please press <img src='#{chrome.extension.getURL "assets/Xbox360_Button_A.png"}' /> to begin"
 
       window.addEventListener "gamepadconnected", =>
         @setupControllers()

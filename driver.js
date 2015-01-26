@@ -230,7 +230,7 @@
           return function() {
             if (_this.controllers.length === 0) {
               overlay = new OverlayMessage();
-              return overlay.show("Please press <img src='" + (chrome.extension.getURL("Xbox360_Button_A.png")) + "' /> to begin");
+              return overlay.show("Please press <img src='" + (chrome.extension.getURL("assets/Xbox360_Button_A.png")) + "' /> to begin");
             }
           };
         })(this));
