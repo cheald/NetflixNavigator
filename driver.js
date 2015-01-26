@@ -606,7 +606,6 @@
             break;
           }
         }
-        console.log("activating", reference);
         this.activate(reference);
         return window.requestAnimationFrame((function(_this) {
           return function() {
@@ -681,15 +680,12 @@
       };
 
       NetflixGridNavigator.prototype.cancel = function() {
-        console.log("cancel a");
         if (NetflixGridNavigator.__super__.cancel.apply(this, arguments)) {
           return;
         }
-        console.log("cancel b");
         if (window.history.length <= 1) {
           return chrome.runtime.sendMessage('closetab');
         } else {
-          console.log("d");
           return window.history.go(-1);
         }
       };
@@ -704,7 +700,6 @@
         elem = $(elem);
         NetflixGridNavigator.__super__.activate.call(this, elem);
         if (elem.length > 0) {
-          console.log(elem.find("a.bobbable"));
           window.postMessage({
             filter: "NetflixNav",
             bob_id: elem.find("a.bobbable").attr("id"),
@@ -814,15 +809,13 @@
     script.src = chrome.extension.getURL("controller.js");
     document.head.appendChild(script);
     if (window.location.pathname.match("/WiPlayer")) {
-      console.log("activating wiplayer");
-      new NetflixMovieDriver({
+      return new NetflixMovieDriver({
         selectors: {
           selector: ".player-control-button:not(.player-hidden), .player-active .episode-list-item, .player-active .player-audio-tracks li, .player-active .player-timed-text-tracks li"
         }
       });
     } else {
-      console.log("activating navigator");
-      new NetflixGridNavigator({
+      return new NetflixGridNavigator({
         "default": ["li.profile", ".displayPagePlayable", ".agMovie"],
         selectors: [
           {
@@ -847,9 +840,6 @@
         ]
       });
     }
-    return console.log("done");
   })(window.jQuery);
-
-  console.log("loaded");
 
 }).call(this);

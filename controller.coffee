@@ -23,10 +23,6 @@ simulate = (element, eventName) ->
     element.fireEvent "on" + eventName, oEvent
   element
 
-window.simulate = simulate
-console.log "added simulate"
-
-
 extend = (destination, source) ->
   for property of source
     destination[property] = source[property]
@@ -56,15 +52,11 @@ wiggleMouse = (elem = $("netflix-player")) ->
 # Mechanism used to tell the extension to reset its element list in response to custom events
 (($) ->
   reset = ->
-    console.log "posting reset"
     window.postMessage {filter: "NetflixMessage", msg: "reset"}, "*"
 
   jQuery(document).on "nflxProfiles.hideOverlay", reset
   jQuery(document).on "nflxProfiles.gateOverlay", reset
   jQuery(document).on "nflxProfiles.switch:start", reset
-
-  document.addEventListener "mouseenter", (e) ->
-    console.log "mouseenter", e
 )(jQuery)
 
 # Respond to control messages from the extension

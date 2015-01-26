@@ -256,7 +256,6 @@ simulate = (->
         selector.priority ||= 1
         f = $(selector.selector).filter(":visible")
         @elements = @elements.add f
-        # console.log "found", f.length, "elements for [#{selector.selector}] (priority #{selector.priority}), elements length is #{@elements.length}"
         break if selector.priority > lastPriority and f.length > 0
         lastPriority = selector.priority
 
@@ -356,7 +355,6 @@ simulate = (->
       for i in [1..times]
         reference = $(@navigate(x, y, reference))
         break if reference.length == 0
-      console.log "activating", reference
       @activate reference
       window.requestAnimationFrame => @updateElements()
 
@@ -393,7 +391,6 @@ simulate = (->
             score = (dy * -1) + (a_dx * wrongAxisPenalty)
           else
             score = null
-          # console.log elem, ax_p: a_dx * wrongAxisPenalty, ay_p: a_dy * wrongAxisPenalty, score: score, _x: _x, _y: _y, ox: ox, oy: oy, dx: dx, dy: dy
 
           if score != null
             if bestScore == null or score < bestScore
@@ -408,13 +405,10 @@ simulate = (->
         window.location.href = "https://www.netflix.com/WiMovie/#{bits[0]}?trkid=#{bits[1]}"
 
     cancel: ->
-      console.log "cancel a"
       return if super
-      console.log "cancel b"
       if window.history.length <= 1
         chrome.runtime.sendMessage('closetab')
       else
-        console.log "d"
         window.history.go(-1)
 
     navigate: (x, y, ref) ->
@@ -427,9 +421,7 @@ simulate = (->
       if elem.length > 0
         # simulate elem.get(0), "mouseover", {pointerX: 5, pointerY: 5}
 
-        # console.log elem.find("span.bobbable").attr("class")
         # bob_id = elem.find("span.bobbable").attr("class").match(/vbox_\d+/)[0]
-        console.log elem.find("a.bobbable")
         window.postMessage({filter: "NetflixNav", bob_id: elem.find("a.bobbable").attr("id"), action: "enter"}, "*")
         # simulate elem.find("a.bobbable").get(0), "mouseenter", {pointerX: 0, pointerY: 0}
 
@@ -481,12 +473,10 @@ simulate = (->
   document.head.appendChild(script)
 
   if window.location.pathname.match("/WiPlayer")
-    console.log "activating wiplayer"
     new NetflixMovieDriver
       selectors:
         selector: ".player-control-button:not(.player-hidden), .player-active .episode-list-item, .player-active .player-audio-tracks li, .player-active .player-timed-text-tracks li"
   else
-    console.log "activating navigator"
     new NetflixGridNavigator
       default: ["li.profile", ".displayPagePlayable", ".agMovie"]
       selectors: [
@@ -502,7 +492,5 @@ simulate = (->
         { selector: "div.agMovie", priority: 1 }
       ]
 
-  console.log "done"
 )(window.jQuery)
 
-console.log "loaded"

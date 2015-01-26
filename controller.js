@@ -34,10 +34,6 @@
     return element;
   };
 
-  window.simulate = simulate;
-
-  console.log("added simulate");
-
   extend = function(destination, source) {
     var property;
     for (property in source) {
@@ -79,7 +75,6 @@
   (function($) {
     var reset;
     reset = function() {
-      console.log("posting reset");
       return window.postMessage({
         filter: "NetflixMessage",
         msg: "reset"
@@ -87,10 +82,7 @@
     };
     jQuery(document).on("nflxProfiles.hideOverlay", reset);
     jQuery(document).on("nflxProfiles.gateOverlay", reset);
-    jQuery(document).on("nflxProfiles.switch:start", reset);
-    return document.addEventListener("mouseenter", function(e) {
-      return console.log("mouseenter", e);
-    });
+    return jQuery(document).on("nflxProfiles.switch:start", reset);
   })(jQuery);
 
   player = (_ref = window.netflix) != null ? (_ref1 = _ref.cadmium) != null ? (_ref2 = _ref1.objects) != null ? _ref2.videoPlayer() : void 0 : void 0 : void 0;
