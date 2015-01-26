@@ -1,12 +1,15 @@
-.grid-nav-active {
+.grid-nav-active, .grid-nav-active-skinny {
 	border: 1px solid #f00;
 	background: #900;
-	padding: 10px !important;
-	margin-bottom: 10px;
+	/* margin-bottom: 10px; */
 	z-index: 9999;
 	border-radius: 3px;
 	box-shadow: rgba(0, 0, 0, 0.5) 3px 4px 5px;
 	color: #fff !important;
+}
+
+.grid-nav-active {
+	padding: 10px !important;
 }
 
 #BobMovie {

@@ -73,16 +73,23 @@
   };
 
   (function($) {
-    var reset;
-    reset = function() {
+    var msg, refresh, reset;
+    msg = function(m) {
       return window.postMessage({
         filter: "NetflixMessage",
-        msg: "reset"
+        msg: m
       }, "*");
     };
-    jQuery(document).on("nflxProfiles.hideOverlay", reset);
-    jQuery(document).on("nflxProfiles.gateOverlay", reset);
-    return jQuery(document).on("nflxProfiles.switch:start", reset);
+    reset = function() {
+      return msg("reset");
+    };
+    refresh = function() {
+      return msg("refresh");
+    };
+    $(document).on("nflxProfiles.hideOverlay", reset);
+    $(document).on("nflxProfiles.gateOverlay", reset);
+    $(document).on("nflxProfiles.switch:start", reset);
+    return $(document).ajaxComplete(refresh);
   })(jQuery);
 
   player = (_ref = window.netflix) != null ? (_ref1 = _ref.cadmium) != null ? (_ref2 = _ref1.objects) != null ? _ref2.videoPlayer() : void 0 : void 0 : void 0;

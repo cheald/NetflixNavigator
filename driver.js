@@ -358,8 +358,11 @@
         window.addEventListener("message", (function(_this) {
           return function(e) {
             if (e.data.filter === "NetflixMessage") {
-              if (e.data.msg === "reset") {
-                return _this.reset();
+              switch (e.data.msg) {
+                case "reset":
+                  return _this.reset();
+                case "refresh":
+                  return _this.updateElements();
               }
             }
           };
@@ -410,7 +413,10 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           selector = _ref[_i];
           selector.priority || (selector.priority = 1);
-          f = $(selector.selector).filter(":visible");
+          f = $(selector.selector);
+          console.log(selector.selector, "found", f.length, "elements");
+          f = f.filter(":visible");
+          console.log(selector.selector, "found", f.length, "elements after visible filter");
           this.elements = this.elements.add(f);
           if (selector.priority > lastPriority && f.length > 0) {
             break;
@@ -426,9 +432,10 @@
           return;
         }
         if (this.currentElem) {
-          $(this.currentElem).removeClass(this.ACTIVE);
+          $(this.currentElem).removeClass(this.currentConfig["class"] || this.ACTIVE);
         }
-        elem.addClass(this.ACTIVE);
+        this.currentConfig = this.getConfigFor(elem);
+        elem.addClass(this.currentConfig["class"] || this.ACTIVE);
         this.currentElem = elem;
         this.focus(elem);
         if (this.isFixed(elem)) {
@@ -510,18 +517,39 @@
       GenericGridNavigator.prototype.info = function() {};
 
       GenericGridNavigator.prototype.clickFocus = function() {
-        var elem, selector, _i, _len, _ref;
+        var config, elem;
         elem = this.currentElem;
+        config = this.currentConfig;
+        if (config != null ? config.click : void 0) {
+          elem = elem.find(selector.click);
+        }
+        simulate($(elem).get(0), "click");
+        if (config != null ? config.selectOnClick : void 0) {
+          requestAnimationFrame((function(_this) {
+            return function() {
+              _this.updateElements();
+              return _this.activate(_this.elements.filter(config != null ? config.selectOnClick : void 0).get(0));
+            };
+          })(this));
+        } else if (config != null ? config.refresh : void 0) {
+          requestAnimationFrame((function(_this) {
+            return function() {
+              return _this.updateElements();
+            };
+          })(this));
+        }
+        return true;
+      };
+
+      GenericGridNavigator.prototype.getConfigFor = function(elem) {
+        var selector, _i, _len, _ref;
         _ref = this.options.selectors;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           selector = _ref[_i];
-          if (elem.is(selector.selector) && selector.click) {
-            elem = elem.find(selector.click);
-            break;
+          if (elem.is(selector.selector)) {
+            return selector;
           }
         }
-        simulate($(elem).get(0), "click");
-        return true;
       };
 
       GenericGridNavigator.prototype.blurFocus = function() {
@@ -589,9 +617,9 @@
         } else if (x === -1) {
           return [rect.right, rect.top + rect.height / 2, rect];
         } else if (y === 1) {
-          return [rect.left + rect.width / 2, rect.top, rect];
+          return [rect.left, rect.top, rect];
         } else if (y === -1) {
-          return [rect.left + rect.width / 2, rect.bottom, rect];
+          return [rect.left, rect.bottom, rect];
         } else if (x === 0 && y === 0) {
           return [rect.left + rect.width / 2, rect.top + rect.height / 2, rect];
         }
@@ -631,7 +659,7 @@
             if (x !== 0) {
               origX = _origRect.top + _origRect.height / 2;
               elemX = _rect.top + _rect.height / 2;
-              isValid = elemX > origX - _origRect.height && elemX < origX + _origRect.height;
+              isValid = Math.abs(elemX - origX) < 150;
             } else {
               isValid = true;
             }
@@ -680,8 +708,19 @@
       };
 
       NetflixGridNavigator.prototype.cancel = function() {
+        var popup, _i, _len, _ref;
         if (NetflixGridNavigator.__super__.cancel.apply(this, arguments)) {
           return;
+        }
+        if (this.options.popups) {
+          _ref = this.options.popups;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            popup = _ref[_i];
+            if ($(popup.selector).is(":visible")) {
+              simulate($(popup.anchor).get(0), "click");
+              return false;
+            }
+          }
         }
         if (window.history.length <= 1) {
           return chrome.runtime.sendMessage('closetab');
@@ -817,6 +856,12 @@
     } else {
       return new NetflixGridNavigator({
         "default": ["li.profile", ".displayPagePlayable", ".agMovie"],
+        popups: [
+          {
+            selector: "#seasonsNav",
+            anchor: "#seasonSelector #selectorButton"
+          }
+        ],
         selectors: [
           {
             selector: ".profilesGate li.profile, ul.profiles li",
@@ -830,7 +875,11 @@
           }, {
             selector: "#seasonSelector #selectorButton",
             refresh: true,
-            priority: 5
+            "class": "grid-nav-active-skinny"
+          }, {
+            selector: "#seasonsNav .seasonItem",
+            selectOnClick: "#seasonSelector #selectorButton",
+            "class": "grid-nav-active-skinny"
           }, {
             selector: ".episodeList li"
           }, {

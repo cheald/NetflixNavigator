@@ -222,8 +222,9 @@ simulate = (->
 
       window.addEventListener "message", (e) =>
         if e.data.filter == "NetflixMessage"
-          if e.data.msg == "reset"
-            @reset()
+          switch e.data.msg 
+            when "reset" then @reset()
+            when "refresh" then @updateElements()
 
       @options = options
       $ =>
@@ -253,7 +254,10 @@ simulate = (->
       lastPriority = 1
       for selector in @options.selectors
         selector.priority ||= 1
-        f = $(selector.selector).filter(":visible")
+        f = $(selector.selector)
+        console.log selector.selector, "found", f.length, "elements"
+        f = f.filter(":visible")
+        console.log selector.selector, "found", f.length, "elements after visible filter"
         @elements = @elements.add f
         break if selector.priority > lastPriority and f.length > 0
         lastPriority = selector.priority
@@ -261,8 +265,11 @@ simulate = (->
     activate: (elem) ->
       elem = $(elem)
       return unless elem.length > 0
-      $(@currentElem).removeClass(@ACTIVE) if @currentElem
-      elem.addClass(@ACTIVE)
+      if @currentElem
+        $(@currentElem).removeClass(@currentConfig.class || @ACTIVE)
+
+      @currentConfig = @getConfigFor(elem)
+      elem.addClass(@currentConfig.class || @ACTIVE)
       @currentElem = elem
       @focus(elem)
       if @isFixed(elem)
@@ -311,12 +318,24 @@ simulate = (->
 
     clickFocus: ->
       elem = @currentElem
-      for selector in @options.selectors
-        if elem.is(selector.selector) and selector.click
-          elem = elem.find(selector.click)
-          break
+      config = @currentConfig
+      if config?.click
+        elem = elem.find(selector.click)
       simulate $(elem).get(0), "click"
+
+      if config?.selectOnClick
+        requestAnimationFrame =>
+          @updateElements()
+          @activate @elements.filter(config?.selectOnClick).get(0)
+      else if config?.refresh
+        requestAnimationFrame => @updateElements()
+
       true
+
+    getConfigFor: (elem) ->
+      for selector in @options.selectors
+        if elem.is(selector.selector)
+          return selector
 
     blurFocus: ->
       document.activeElement.blur()
@@ -343,9 +362,9 @@ simulate = (->
       else if x == -1
         return [rect.right, rect.top + rect.height / 2, rect]
       else if y == 1
-        return [rect.left + rect.width / 2, rect.top, rect]
+        return [rect.left, rect.top, rect]
       else if y == -1
-        return [rect.left + rect.width / 2, rect.bottom, rect]
+        return [rect.left, rect.bottom, rect]
       else if x == 0 and y == 0
         return [rect.left + rect.width / 2, rect.top + rect.height / 2, rect]
 
@@ -374,7 +393,7 @@ simulate = (->
           if x != 0
             origX = (_origRect.top + _origRect.height / 2)
             elemX = (_rect.top + _rect.height / 2)
-            isValid = elemX > origX - _origRect.height and elemX < origX + _origRect.height
+            isValid = Math.abs(elemX - origX) < 150 # - _origRect.height and elemX < origX + _origRect.height
           else
             isValid = true
           continue unless isValid
@@ -405,6 +424,11 @@ simulate = (->
 
     cancel: ->
       return if super
+      if @options.popups
+        for popup in @options.popups
+          if $(popup.selector).is(":visible")
+            simulate $(popup.anchor).get(0), "click"
+            return false
       if window.history.length <= 1
         chrome.runtime.sendMessage('closetab')
       else
@@ -473,6 +497,9 @@ simulate = (->
   else
     new NetflixGridNavigator
       default: ["li.profile", ".displayPagePlayable", ".agMovie"]
+      popups: [
+        {selector: "#seasonsNav", anchor: "#seasonSelector #selectorButton"}
+      ]
       selectors: [
         # Profile selector
         { selector: ".profilesGate li.profile, ul.profiles li", click: "span", priority: 10 }
@@ -480,8 +507,10 @@ simulate = (->
         { selector: "li.nav-item .content a, #searchTab a" }
         # Detail page
         { selector: ".displayPagePlayable", click: "a" }
-        { selector: "#seasonSelector #selectorButton", refresh: true, priority: 5 }
+        { selector: "#seasonSelector #selectorButton", refresh: true, class: "grid-nav-active-skinny" }
+        { selector: "#seasonsNav .seasonItem", selectOnClick: "#seasonSelector #selectorButton", class: "grid-nav-active-skinny" }
         { selector: ".episodeList li"}
+        # { selector: ".recommended .boxShot" }
         # General movie grid
         { selector: "div.agMovie", priority: 1 }
       ]

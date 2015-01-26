@@ -51,12 +51,17 @@ wiggleMouse = (elem = $("netflix-player")) ->
 
 # Mechanism used to tell the extension to reset its element list in response to custom events
 (($) ->
-  reset = ->
-    window.postMessage {filter: "NetflixMessage", msg: "reset"}, "*"
+  msg = (m)->
+    window.postMessage {filter: "NetflixMessage", msg: m}, "*"
 
-  jQuery(document).on "nflxProfiles.hideOverlay", reset
-  jQuery(document).on "nflxProfiles.gateOverlay", reset
-  jQuery(document).on "nflxProfiles.switch:start", reset
+  reset = -> msg "reset"
+  refresh = -> msg "refresh"
+
+  $(document).on "nflxProfiles.hideOverlay", reset
+  $(document).on "nflxProfiles.gateOverlay", reset
+  $(document).on "nflxProfiles.switch:start", reset
+  $(document).ajaxComplete refresh
+
 )(jQuery)
 
 # Respond to control messages from the extension
