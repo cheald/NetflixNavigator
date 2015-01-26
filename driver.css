@@ -1,0 +1,88 @@
+.grid-nav-active {
+	border: 1px solid #f00;
+	background: #900;
+	padding: 10px !important;
+	margin-bottom: 10px;
+	z-index: 9999;
+	border-radius: 3px;
+	box-shadow: rgba(0, 0, 0, 0.5) 3px 4px 5px;
+	color: #fff !important;
+}
+
+#BobMovie {
+	position: fixed !important;
+	bottom: -1px !important;
+	top: auto !important;
+	left: -16px !important;
+	right: -16px !important;
+	width: 66% !important;
+	max-width: 750px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	opacity: 0.93;
+}
+
+#BobMovie-arrow { display: none !important; }
+#BobMovie-content {
+	padding-bottom: 35px !important;
+	background: linear-gradient(#333, #000) !important;
+	border-width: 0px !important;
+	color: #fff !important;
+	font-size: 14pt;
+}
+
+#BobMovie-content .readMore { display: block; height: 1px; overflow: hidden; color: #000;}
+#BobMovie-content .info { border: 0 !important; }
+
+#BobMovie .bobMovieContent { position: static !important;}
+#BobMovie .interactive .bobMovieRatings { position: static !important; }
+#BobMovie .bobMovieActions  { display: none !important; }
+#BobMovie .interactive .stbrWrapOlNi { float: none !important; }
+.bobMovieRatings p.label { display: none; }
+div#BobMovie .interactive .bobMovieRatings .starbar {
+	position: absolute;
+	width: auto !important;
+	display: inline-block;
+	background: #fff;
+	border-radius: 4px;
+	padding: 16px 10px 0 10px;
+	top: 6px;
+	right: 5px;
+}
+div#BobMovie .strbrBtnContainer { display: none !important; }
+
+.grid-nav-active .boxShot { margin: 0 !important; }
+
+.controls-nav-active {
+	background: #900 !important;
+}
+
+.navigator-overlay {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	transition: opacity 0.5s;
+	text-align: center;
+	font-size: 24pt;
+	color: #fff;
+}
+
+.navigator-overlay span {
+	margin-top: 20%;
+	display: inline-block;
+	border: 2px solid rgba(64, 255, 64, 0.4);
+	box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 15px;
+	border-radius: 20px;
+	padding: 10px;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.navigator-overlay img {
+	vertical-align: middle;
+}
+
+// .sliderButton { display: none !important; }

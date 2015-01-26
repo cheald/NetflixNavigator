@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Netflix Navigator",
+  "description": "Navigate Netflix with your keyboard or game controller",
+  "version": "1.0",
+  "permissions": [ "*://www.netflix.com/*" ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [{
+    "matches": ["*://www.netflix.com/*"],
+    "css": ["driver.css"],
+    "js": ["jquery.js", "jquery.scrollTo.js", "driver.js"]
+  }],
+  "web_accessible_resources": [
+    "Xbox360_Button_A.png",
+    "controller.js"
+  ]
+}
