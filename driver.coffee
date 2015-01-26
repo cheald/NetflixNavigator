@@ -181,7 +181,7 @@ simulate = (->
   class OverlayMessage
     getElem: ->
       @elem = $(".navigator-overlay")
-      if(@elem.length == 0)
+      if @elem.length == 0
         $("body").append("<div class='navigator-overlay'><span></span></div>")
         @elem = $(".navigator-overlay")
         @elem.on "click", (e) ->
@@ -233,7 +233,6 @@ simulate = (->
             clearInterval elementPoller
             @activateFirstElement()
         , 200
-        # $(document).ajaxComplete => @updateElements
       super
 
     reset: ->
@@ -377,7 +376,7 @@ simulate = (->
             elemX = (_rect.top + _rect.height / 2)
             isValid = elemX > origX - _origRect.height and elemX < origX + _origRect.height
           else
-            isValid = true # a_dy > a_dx
+            isValid = true
           continue unless isValid
 
           wrongAxisPenalty = 1
@@ -419,11 +418,7 @@ simulate = (->
       elem = $(elem)
       super(elem)
       if elem.length > 0
-        # simulate elem.get(0), "mouseover", {pointerX: 5, pointerY: 5}
-
-        # bob_id = elem.find("span.bobbable").attr("class").match(/vbox_\d+/)[0]
         window.postMessage({filter: "NetflixNav", bob_id: elem.find("a.bobbable").attr("id"), action: "enter"}, "*")
-        # simulate elem.find("a.bobbable").get(0), "mouseenter", {pointerX: 0, pointerY: 0}
 
         rect = elem[0].getBoundingClientRect()
         if (rect.right > document.body.clientWidth * 0.9)
@@ -446,7 +441,6 @@ simulate = (->
       args.filter = "NetflixControl"
       args.event = msg
       window.postMessage args, "*"
-      # window.dispatchEvent new CustomEvent('NetflixControlEvent', JSON.stringify(args))
 
     axis: (axisId, magnitude, state) ->
       $(".player-controls-wrapper").removeClass("display-none opacity-transparent")
