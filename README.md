@@ -22,7 +22,7 @@ To do:
 
 ## How to use
 
-Install the extension. Go to Netflix. Use your controller.
+Install the extension from [the Chrome web store](https://chrome.google.com/webstore/detail/netflix-navigator/baifcdmbdpacahdlfeamhgijijeflmlh). Go to Netflix. Use your controller.
 
 ### In navigation mode:
 

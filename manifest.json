@@ -3,7 +3,7 @@
   "name": "Netflix Navigator",
   "short_name": "NetflixNav",
   "description": "Navigate Netflix with your keyboard or game controller",
-  "version": "1.0",
+  "version": "1.0.1",
   "permissions": [ "*://www.netflix.com/*" ],
   "background": {
     "scripts": ["background.js"]
