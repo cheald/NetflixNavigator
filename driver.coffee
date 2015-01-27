@@ -255,9 +255,9 @@ simulate = (->
       for selector in @options.selectors
         selector.priority ||= 1
         f = $(selector.selector)
-        console.log selector.selector, "found", f.length, "elements"
+        # console.log selector.selector, "found", f.length, "elements"
         f = f.filter(":visible")
-        console.log selector.selector, "found", f.length, "elements after visible filter"
+        # console.log selector.selector, "found", f.length, "elements after visible filter"
         @elements = @elements.add f
         break if selector.priority > lastPriority and f.length > 0
         lastPriority = selector.priority
@@ -320,7 +320,7 @@ simulate = (->
       elem = @currentElem
       config = @currentConfig
       if config?.click
-        elem = elem.find(selector.click)
+        elem = elem.find(config.click)
       simulate $(elem).get(0), "click"
 
       if config?.selectOnClick
@@ -502,7 +502,7 @@ simulate = (->
       ]
       selectors: [
         # Profile selector
-        { selector: ".profilesGate li.profile, ul.profiles li", click: "span", priority: 10 }
+        { selector: ".profilesGate li.profile, ul.profiles li", click: "a, span", priority: 10 }
         # Nav bar
         { selector: "li.nav-item .content a, #searchTab a" }
         # Detail page

@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Netflix Navigator",
+  "short_name": "NetflixNav",
   "description": "Navigate Netflix with your keyboard or game controller",
   "version": "1.0",
   "permissions": [ "*://www.netflix.com/*" ],

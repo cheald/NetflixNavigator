@@ -414,9 +414,7 @@
           selector = _ref[_i];
           selector.priority || (selector.priority = 1);
           f = $(selector.selector);
-          console.log(selector.selector, "found", f.length, "elements");
           f = f.filter(":visible");
-          console.log(selector.selector, "found", f.length, "elements after visible filter");
           this.elements = this.elements.add(f);
           if (selector.priority > lastPriority && f.length > 0) {
             break;
@@ -521,7 +519,7 @@
         elem = this.currentElem;
         config = this.currentConfig;
         if (config != null ? config.click : void 0) {
-          elem = elem.find(selector.click);
+          elem = elem.find(config.click);
         }
         simulate($(elem).get(0), "click");
         if (config != null ? config.selectOnClick : void 0) {
@@ -865,7 +863,7 @@
         selectors: [
           {
             selector: ".profilesGate li.profile, ul.profiles li",
-            click: "span",
+            click: "a, span",
             priority: 10
           }, {
             selector: "li.nav-item .content a, #searchTab a"
